@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.env
+.venv/
+venv/
+ENV/
+Pipfile.lock
+
+# FastAPI/uvicorn artifacts
+*.log
+
+# macOS
+.DS_Store
+
+# Node / frontend temp (if any)
+node_modules/
+dist/
+build/
+
+# Local tooling
+*.local
+.idea/
+.vscode/
+
+# LanguageTool cache
+language-tool-python/*/
