@@ -10,6 +10,18 @@ The frontend lets evaluators paste a transcript, optionally add duration (second
 
 ---
 
+## 🚀 Live Demo
+
+**Frontend (Netlify):** [https://nirmaan-communication-score.netlify.app](https://nirmaan-communication-score.netlify.app)
+
+**Backend API (Railway):** [https://nirmaan-communication-scorer-production.up.railway.app](https://nirmaan-communication-scorer-production.up.railway.app)
+- Health check: [/health](https://nirmaan-communication-scorer-production.up.railway.app/health)
+- API docs: [/docs](https://nirmaan-communication-scorer-production.up.railway.app/docs)
+
+**GitHub Repository:** [https://github.com/Daanu18/nirmaan-communication-scorer](https://github.com/Daanu18/nirmaan-communication-scorer)
+
+---
+
 ## Architecture
 
 | Layer      | Stack / Notes                                                                                                          |
@@ -63,7 +75,7 @@ DEPLOYMENT_STEPS.md
 
 1. **Clone & enter repo**
    ```bash
-   git clone https://github.com/<your-user>/nirmaan-communication-scorer.git
+   git clone https://github.com/Daanu18/nirmaan-communication-scorer.git
    cd nirmaan-communication-scorer
    ```
 2. **Install backend dependencies**
@@ -138,7 +150,22 @@ Response
 
 ---
 
-## Deployment Notes
+## Deployment
+
+### Production Deployment
+
+- **Backend:** Deployed on [Railway.app](https://railway.app) using Docker
+  - Uses multi-stage Docker build to optimize image size
+  - Includes Java runtime for LanguageTool
+  - Auto-deploys on git push to `main` branch
+  - Environment: Python 3.11, 1GB RAM allocation
+
+- **Frontend:** Deployed on [Netlify](https://netlify.com)
+  - Static site hosting with auto-deploy from GitHub
+  - Configured to call Railway backend API
+  - Base directory: `frontend/`
+
+### Local Development
 
 - The backend command above reads the `PORT` environment variable so it can run on PaaS providers (Render/Railway/Heroku) that inject dynamic ports.
 - The frontend automatically detects the API base:
@@ -155,6 +182,8 @@ Response
 - ✅ README with scoring explanation and run instructions
 - ✅ `DEPLOYMENT_STEPS.md` documented for evaluators
 - ✅ Optional enhancements: semantic keyword matching, keyword badges, reset button
+- ✅ Production deployment: Backend on Railway, Frontend on Netlify
+- ✅ Error handling and fallback mechanisms for robust operation
 
 ---
 
@@ -162,8 +191,9 @@ Response
 
 - Export to PDF / downloadable JSON report
 - Named-entity extraction to highlight student name in UI
-- Hosted deployment on Render/Railway + GitHub Pages with HTTPS
 - Fine-tune thresholds per grade level or speech-length cohort
+- Batch processing for multiple transcripts
+- Historical score tracking and analytics dashboard
 
 Contributions and suggestions are welcome!
 
