@@ -1,0 +1,14 @@
+.git
+.gitignore
+README.md
+DEPLOYMENT_STEPS.md
+frontend/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.env
+.venv/
+venv/
+*.log
+
