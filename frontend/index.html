@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nirmaan AI Communication Scorer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Nirmaan Communication Scorer</h1>
+      <p>
+        Paste a <strong>self-introduction transcript</strong> below and click
+        <strong>Score</strong> to see rubric-based results.
+      </p>
+    </header>
+
+    <main>
+      <section class="input-card">
+        <label for="transcript">Transcript</label>
+        <textarea id="transcript" rows="10"
+          placeholder="Paste the student's self-introduction text here..."></textarea>
+
+        <div class="input-row">
+          <label for="duration">
+            Duration in seconds (optional, for more accurate WPM):
+          </label>
+          <input id="duration" type="number" min="0" step="1" placeholder="e.g., 52" />
+        </div>
+
+        <div class="actions">
+          <button id="scoreBtn">Score</button>
+          <button id="resetBtn" class="secondary-btn" type="button">
+            New Transcript
+          </button>
+        </div>
+      </section>
+
+      <section class="output">
+        <div id="overallCard" class="card hidden"></div>
+        <div id="keywordCard" class="card hidden"></div>
+        <div id="criteriaCard" class="card hidden"></div>
+      </section>
+    </main>
+
+    <footer>
+      <small>Built for Nirmaan AI Intern Case Study</small>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
