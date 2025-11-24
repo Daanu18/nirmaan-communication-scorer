@@ -24,11 +24,16 @@ def get_sentence_model() -> SentenceTransformer:
     return _sentence_model
 
 
-def get_language_tool() -> LanguageTool:
+def get_language_tool() -> Optional[LanguageTool]:
     global _language_tool
     if _language_tool is None:
-        _language_tool = LanguageTool("en-US")
-    return _language_tool
+        try:
+            _language_tool = LanguageTool("en-US")
+        except Exception as e:
+            print(f"Warning: LanguageTool initialization failed: {e}")
+            print("Grammar checking will use fallback method.")
+            _language_tool = False  # Use False to indicate failure
+    return _language_tool if _language_tool is not False else None
 
 
 def get_sentiment_analyzer() -> SentimentIntensityAnalyzer:
@@ -385,6 +390,31 @@ def score_speech_rate(words: int, duration_seconds: Optional[float]) -> Tuple[fl
     return pts, feedback, wpm
 
 
+def estimate_grammar_errors_simple(text: str, words: int) -> int:
+    """
+    Simple fallback grammar error estimation when LanguageTool is unavailable.
+    Checks for common mistakes: double spaces, missing capitalization, etc.
+    """
+    error_count = 0
+    sentences = re.split(r"[.!?]+", text.strip())
+    
+    for sent in sentences:
+        sent = sent.strip()
+        if not sent:
+            continue
+        # Check if sentence starts with capital (rough check)
+        if sent and sent[0].islower():
+            error_count += 1
+        # Check for double spaces
+        if "  " in sent:
+            error_count += 1
+    
+    # Estimate based on length (very rough heuristic)
+    # Assume ~1-2 errors per 50 words as baseline
+    estimated = max(error_count, words // 50)
+    return min(estimated, words // 10)  # Cap at reasonable level
+
+
 def score_grammar_and_vocab(words: int, text: str) -> Tuple[float, float, str]:
     """
     Return (grammar_points out of 10, vocab_points out of 10, feedback).
@@ -392,8 +422,23 @@ def score_grammar_and_vocab(words: int, text: str) -> Tuple[float, float, str]:
     Vocabulary richness uses Type-Token Ratio (TTR).
     """
     tool = get_language_tool()
-    matches = tool.check(text)
-    error_count = len(matches)
+    error_count = 0
+    using_fallback = False
+    
+    if tool is not None:
+        try:
+            matches = tool.check(text)
+            error_count = len(matches)
+        except Exception as e:
+            print(f"Warning: LanguageTool check failed: {e}")
+            # Fallback: estimate errors based on simple heuristics
+            error_count = estimate_grammar_errors_simple(text, words)
+            using_fallback = True
+    else:
+        # Fallback: estimate errors based on simple heuristics
+        error_count = estimate_grammar_errors_simple(text, words)
+        using_fallback = True
+    
     if words == 0:
         errors_per_100 = 0.0
     else:
@@ -419,8 +464,9 @@ def score_grammar_and_vocab(words: int, text: str) -> Tuple[float, float, str]:
     else:
         vocab_points = 2.0
 
+    grammar_method = "estimated" if using_fallback else "detected"
     feedback = (
-        f"Grammar: {error_count} errors (~{errors_per_100:.1f} per 100 words) "
+        f"Grammar: {error_count} errors {grammar_method} (~{errors_per_100:.1f} per 100 words) "
         f"→ {grammar_points:.1f}/10. "
         f"Vocabulary richness (TTR={ttr:.2f}) → {vocab_points:.1f}/10."
     )
