@@ -48,8 +48,14 @@ def health() -> Dict[str, str]:
 
 @app.post("/score", response_model=ScoreResponse)
 def score_endpoint(body: ScoreRequest):
-    result = score_transcript(
-        transcript=body.transcript,
-        duration_seconds=body.duration_seconds,
-    )
-    return result
+    try:
+        result = score_transcript(
+            transcript=body.transcript,
+            duration_seconds=body.duration_seconds,
+        )
+        return result
+    except Exception as e:
+        import traceback
+        print(f"Error in score_endpoint: {e}")
+        print(traceback.format_exc())
+        raise
